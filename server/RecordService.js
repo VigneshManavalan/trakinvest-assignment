@@ -43,7 +43,7 @@ app.post("/records",(req,res)=>{
     })
 
     recordToInsert.save().then(data=>{
-        produceMessage(data._id)
+        produceMessage(""+data._id)
         res.json(data._id)})
 
 })

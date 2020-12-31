@@ -5,8 +5,8 @@ connect();
 async function connect() {
 
     try {
-        const amqpServer = "amqp://localhost:5672"
-        const connection = await amqp.connect(amqpServer)
+        const rabbitMQServer = "amqp://localhost:5672"
+        const connection = await amqp.connect(rabbitMQServer)
         const channel = await connection.createChannel();
         await channel.assertQueue("records");
         
@@ -20,8 +20,8 @@ async function connect() {
         console.log("Ready to consume records")
     
     }
-    catch (ex){
-        console.error(ex)
+    catch (error){
+        console.error(error)
     }
 
 }
