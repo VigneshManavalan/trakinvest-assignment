@@ -13,7 +13,26 @@ const connectToDatabase = () => {
     });
 }
 app.use(bodyParser.json())
+const amqp = require("amqplib");
 
+
+const  produceMessage =async (message)=> {
+
+    try {
+        const rabbitMQServer = "amqp://localhost:5672"
+        const connection = await amqp.connect(rabbitMQServer)
+        const channel = await connection.createChannel();
+        await channel.assertQueue("records");
+        await channel.sendToQueue("records", Buffer.from(message))
+        console.log(`Record was sent successfully ${message}`);
+        await channel.close();
+        await connection.close();
+    }
+    catch (error){
+        console.error(error)
+    }
+
+}
 app.post("/records",(req,res)=>{
     const email = req.body.email
     const name = req.body.name
@@ -23,7 +42,9 @@ app.post("/records",(req,res)=>{
         name
     })
 
-    recordToInsert.save().then(data=>{res.json(data._id)})
+    recordToInsert.save().then(data=>{
+        produceMessage(data._id)
+        res.json(data._id)})
 
 })
 
